@@ -13,7 +13,7 @@ impl Activation {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Norm {
     pub input_data: Array2<f64>,
     pub input_mean: Array1<f64>,
@@ -49,7 +49,7 @@ impl Norm {
         let pre_std = data.std_axis(Axis(0), 0.0);
         let std = pre_std.mapv(|mut x| {
             if x == 0.0 {
-                x = 1e-10;
+                x = 1e-8;
             }
             x
         });
@@ -73,7 +73,7 @@ impl Dimensions {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Matrix {
     pub w1: Array2<f64>,
     pub b1: Array1<f64>,
@@ -99,18 +99,27 @@ impl Matrix {
 pub struct TrainData;
 impl TrainData {
     pub fn train(iterations: usize, learning_rate: f64, mut matrix: Matrix, data: Norm) -> Matrix {
+        let size = 1;
 
         for i in 0..=iterations {
             
-            if i % 1_000 == 0 {
-                println!("{}", (iterations - i) / 1_000 );
+            if i % size == 0 {
+                println!("{}", (iterations - i) / size );
             }
 
             let z1 = data.input_norm.dot(&matrix.w1) + &matrix.b1;
             let a1 = Activation::sigmoid(z1.clone());
             let z2 = a1.dot(&matrix.w2) + &matrix.b2;
             let y_pred = z2;
-    
+            
+            // println!("\nB1:{}", matrix.b1);
+            // println!("\nW1:{}", matrix.w1);
+            // println!("\nData_Norm:{}", data.input_norm);
+            // println!("\nB2:{}", matrix.b2);
+            // println!("\nW2:{}", matrix.w2);
+            // println!("\nNorm2:{}", a1);
+            // println!("\nPRED: {}", y_pred);
+
             let delta2 = y_pred - data.output_norm.clone();
             let delta1 = delta2.dot(&matrix.w2.t()) * Activation::sigmoid_prime(z1);
 

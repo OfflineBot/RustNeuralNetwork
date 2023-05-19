@@ -1,6 +1,8 @@
 use std::fs;
 use std::io;
+use mnist::*;
 
+#[allow(unused)]
 use ndarray::{Array2, Axis, Array1, array};
 
 pub struct Input {
@@ -8,12 +10,13 @@ pub struct Input {
     pub output: Array2<f64>,
 }
 
+#[allow(unused)]
 pub fn read() -> Result<Input, io::Error> {
     if !check_exist() {
         return Err(io::Error::new(io::ErrorKind::NotFound, "Folder not found!"));
     }
 
-    let folder = "data";
+    let folder = "pic_data";
     let image_iteration_length = 1;
     let image_width = 28 * 28;
 
@@ -40,14 +43,16 @@ pub fn read() -> Result<Input, io::Error> {
     })
 }
 
+#[allow(unused)]
 pub fn get_test_data() -> Result<Array2<f64>, io::Error> {
     let folder = "input_data/0.png";
     if let Ok(image) = image::open(folder) {
         let gray_image = image.to_luma8();
         let image_array: Array1<f64> = gray_image.pixels().map(|pixel| pixel[0] as f64).collect();
-        let out: Array2<f64> = Array2::zeros((1, 28 * 28));
+        let mut out: Array2<f64> = Array2::zeros((1, 28 * 28));
+        out.index_axis_mut(Axis(0), 0).assign(&image_array.reversed_axes());
         return Ok(out);
-    } 
+    }
     Err(
         io::Error::new(io::ErrorKind::NotFound, "Data not Found!")
     )
