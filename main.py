@@ -6,7 +6,8 @@ import os
 (train_image, train_label), (test_image, test_label) = mnist.load_data()
 
 save_folder = "mnist_images"
-for i in range(3_000):
+image_count = 3_000
+for i in range(image_count):
 
     if i % 100 == 0:
         print(i)
@@ -14,5 +15,8 @@ for i in range(3_000):
     index = train_label[i]
 
     image = Image.fromarray(train_image[i])
-    image_path = os.path.join(save_folder, f"{index}/{i}.png")
+    path = f"{save_folder}/{index}"
+    number = os.listdir(path)
+    image_path = os.path.join(save_folder, f"{index}/{len(number)}.png")
     image.save(image_path)
+print(f"Added a total of {image_count} pictures")

@@ -100,6 +100,7 @@ pub struct TrainData;
 impl TrainData {
     pub fn train(iterations: usize, learning_rate: f64, mut matrix: Matrix, data: Norm) -> Matrix {
         let size = 1;
+        let gradien_threshold = 1.0;
 
         for i in 0..=iterations {
             
@@ -111,17 +112,16 @@ impl TrainData {
             let a1 = Activation::sigmoid(z1.clone());
             let z2 = a1.dot(&matrix.w2) + &matrix.b2;
             let y_pred = z2;
-            
-            // println!("\nB1:{}", matrix.b1);
-            // println!("\nW1:{}", matrix.w1);
-            // println!("\nData_Norm:{}", data.input_norm);
-            // println!("\nB2:{}", matrix.b2);
-            // println!("\nW2:{}", matrix.w2);
-            // println!("\nNorm2:{}", a1);
-            // println!("\nPRED: {}", y_pred);
 
             let delta2 = y_pred - data.output_norm.clone();
-            let delta1 = delta2.dot(&matrix.w2.t()) * Activation::sigmoid_prime(z1);
+            let mut delta1 = delta2.dot(&matrix.w2.t()) * Activation::sigmoid_prime(z1.clone());
+
+            let delta1_norm = TrainData::norm_l2(delta1.clone());
+            if delta1_norm > gradien_threshold / delta1_norm {
+                let scaling_factor = gradien_threshold / delta1_norm;
+                delta1 *= scaling_factor;
+            }
+
 
             matrix.w1 = &matrix.w1 - data.input_norm.t().dot(&delta1) * learning_rate;
             matrix.b1 = &matrix.b1 - delta1.sum_axis(Axis(0)) * learning_rate;
@@ -130,6 +130,11 @@ impl TrainData {
         }
 
         matrix
+    }
+
+    fn norm_l2(array: Array2<f64>) -> f64 {
+        let sum: f64 = array.iter().map(|&x| x * x).sum();
+        sum.sqrt()
     }
 }
 
@@ -144,3 +149,4 @@ impl Test {
         test_output
     }
 }
+

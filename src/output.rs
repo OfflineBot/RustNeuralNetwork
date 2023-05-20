@@ -4,9 +4,9 @@ use ndarray::Array2;
 
 use crate::network::{Matrix, Norm};
 
-pub fn print(data: Array2<f64>) {
-    let mut file = File::create("my_data.txt").unwrap();
-    file.write_all(format!("{}", data).as_bytes()).unwrap();
+pub fn print(data: Array2<f64>, location: String) {
+    let mut file = File::create(location).unwrap();
+    file.write_all(format!("{:#}", data).as_bytes()).unwrap();
 }
 
 pub fn print_training_data(data: Matrix, norm: Norm) {
