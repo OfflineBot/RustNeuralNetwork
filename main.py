@@ -6,7 +6,7 @@ import os
 (train_image, train_label), (test_image, test_label) = mnist.load_data()
 
 save_folder = "mnist_images"
-image_count = 3_000
+image_count = 30_000
 for i in range(image_count):
 
     if i % 100 == 0:

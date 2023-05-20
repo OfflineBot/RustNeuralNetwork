@@ -98,14 +98,15 @@ impl Matrix {
 
 pub struct TrainData;
 impl TrainData {
-    pub fn train(iterations: usize, learning_rate: f64, mut matrix: Matrix, data: Norm) -> Matrix {
-        let size = 1;
+    pub fn train(iterations: usize, learning_rate: f64, mut matrix: Matrix, data: Norm, print_size: usize) -> Matrix {
+        let size = print_size;
         let gradien_threshold = 1.0;
 
         for i in 0..=iterations {
             
             if i % size == 0 {
-                println!("{}", (iterations - i) / size );
+                //println!("{}", (iterations - i) / size );
+                println!("{:.2}%", i as f64 / iterations as f64 * 100.0);
             }
 
             let z1 = data.input_norm.dot(&matrix.w1) + &matrix.b1;
